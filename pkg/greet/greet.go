@@ -16,7 +16,7 @@ _  /___/  __/ /_ _(__  )_  /_/ // /_/ /
 Developed by CX330Blake      2024/12/09
 =======================================
 
-Ready for traversal? Let's Goooooo!!!
+[~] Ready for traversal? Let's Goooooo!!!
 
 `
 

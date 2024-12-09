@@ -12,6 +12,7 @@ import (
 
 	"github.com/CX330Blake/letsgo/pkg/greet"
 	"github.com/fatih/color"
+	"github.com/schollz/progressbar/v3"
 )
 
 // 加載 Payload
@@ -61,6 +62,7 @@ func testPathTraversal(url string, param string, payloads []string) {
 	}
 
 	var wg sync.WaitGroup
+	pBar := progressbar.Default(int64(len(payloads)))
 
 	for _, payload := range payloads {
 		wg.Add(1)
@@ -68,6 +70,7 @@ func testPathTraversal(url string, param string, payloads []string) {
 			defer wg.Done()
 			testPayload(url, param, pl)
 		}(payload)
+		pBar.Add(1)
 	}
 
 	wg.Wait()
