@@ -1,2 +1,2 @@
-# letsgo
-Local Enumeration and Traversal Scanning in Go
+# letsgo - Local Enumeration & Traversal Scanning in Go
+
