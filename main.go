@@ -12,14 +12,16 @@ import (
 
 	"github.com/CX330Blake/letsgo/pkg/greet"
 	"github.com/fatih/color"
-	"github.com/schollz/progressbar/v3"
 )
 
 // Load payload
-func loadPayloads(filePath string) ([]string, error) {
+func loadPayloads(filePath string) ([]string, bool) {
+	useDefault := false
 	file, err := os.Open(filePath)
 	if err != nil {
-		return nil, fmt.Errorf("Cannot load the wordlist: %v", err)
+		file, err = os.Open("./default.txt")
+		useDefault = true
+		// return nil, fmt.Errorf("cannot load the wordlist: %v", err)
 	}
 	defer file.Close()
 
@@ -29,11 +31,11 @@ func loadPayloads(filePath string) ([]string, error) {
 		payloads = append(payloads, scanner.Text())
 	}
 
-	if err := scanner.Err(); err != nil {
-		return nil, fmt.Errorf("Error on reading the wordlist: %v", err)
-	}
+	// if err := scanner.Err(); err != nil {
+	// 	return nil, useDefault
+	// }
 
-	return payloads, nil
+	return payloads, useDefault
 }
 
 // Send request and check response
@@ -62,7 +64,6 @@ func testPathTraversal(url string, param string, payloads []string) {
 	}
 
 	var wg sync.WaitGroup
-	pBar := progressbar.Default(int64(len(payloads)))
 
 	for _, payload := range payloads {
 		wg.Add(1)
@@ -70,7 +71,6 @@ func testPathTraversal(url string, param string, payloads []string) {
 			defer wg.Done()
 			testPayload(url, param, pl)
 		}(payload)
-		pBar.Add(1)
 	}
 
 	wg.Wait()
@@ -82,7 +82,7 @@ func main() {
 	// Parse command line arguments
 	url := flag.String("url", "", "Target URL (E.g. http://example.com)")
 	param := flag.String("param", "file", "Parameter for testing (default is 'file')")
-	payloadFile := flag.String("payloads", "payloads.txt", "Wordlist path")
+	wordlistFile := flag.String("wordlist", "default.txt", "Wordlist path")
 	flag.Parse()
 
 	if *url == "" {
@@ -90,15 +90,16 @@ func main() {
 		os.Exit(1)
 	}
 
-	// Load payload
-	payloads, err := loadPayloads(*payloadFile)
-	if err != nil {
-		color.Red("[!] Cannot laod the wordlist: %v\n", err)
-		os.Exit(1)
-	}
-
 	// Hack the planet
 	greet.Hello()
+
+	payloads, useDefault := loadPayloads(*wordlistFile)
+	if useDefault && *wordlistFile != "default.txt" {
+		color.Magenta("[!] Cannot load the wordlist, using default list now...\n")
+	} else if *wordlistFile == "default.txt" {
+		color.Magenta("[+] Using default wordlist...\n")
+	}
+
 	testPathTraversal(*url, *param, payloads)
 	greet.End()
 }
