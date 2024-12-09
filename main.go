@@ -15,7 +15,7 @@ import (
 	"github.com/schollz/progressbar/v3"
 )
 
-// 加載 Payload
+// Load payload
 func loadPayloads(filePath string) ([]string, error) {
 	file, err := os.Open(filePath)
 	if err != nil {
