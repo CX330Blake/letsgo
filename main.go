@@ -8,6 +8,7 @@ import (
 	"log"
 	"net/http"
 	"os"
+	"strings"
 	"sync"
 
 	"github.com/CX330Blake/letsgo/pkg/greet"
@@ -40,7 +41,11 @@ func loadPayloads(filePath string) ([]string, bool) {
 
 // Send request and check response
 func testPayload(url string, param string, fileRoot string, wordlist string) {
-	fullURL := fmt.Sprintf("%s?%s=%s/%s", url, param, fileRoot, wordlist)
+	if !strings.HasSuffix(fileRoot, "/") {
+		fileRoot += "/"
+	}
+
+	fullURL := fmt.Sprintf("%s?%s=%s%s", url, param, fileRoot, wordlist)
 	resp, err := http.Get(fullURL)
 	if err != nil {
 		// color.Red("[!] Request failed: %v\n", err)
@@ -87,7 +92,7 @@ func main() {
 	flag.Parse()
 
 	if *url == "" {
-		color.Yellow("Usage: ./LetsGo -url <https://example.com>")
+		color.Magenta("Basic usage: ./letsgo -url <https://example.com>")
 		os.Exit(1)
 	}
 
