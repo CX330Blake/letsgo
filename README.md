@@ -1,4 +1,4 @@
-<img src="https://github.com/user-attachments/assets/e5555fcf-9115-48aa-9216-d2e2d4ed4f9f" style="height:400px"/>
+<img src="https://github.com/user-attachments/assets/e5555fcf-9115-48aa-9216-d2e2d4ed4f9f" style="height: 400px; width: auto;">
 
 
 # letsgo - Local Enumeration & Traversal Scanning in Go
