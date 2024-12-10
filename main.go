@@ -3,15 +3,12 @@ package main
 import (
 	"bufio"
 	"flag"
-	"fmt"
 	"io"
 	"log"
-	"net/http"
 	"os"
-	"strings"
-	"sync"
 
 	"github.com/CX330Blake/letsgo/pkg/greet"
+	"github.com/CX330Blake/letsgo/pkg/letsgo"
 	"github.com/fatih/color"
 )
 
@@ -39,47 +36,6 @@ func loadPayloads(filePath string) ([]string, bool) {
 	return payloads, useDefault
 }
 
-// Send request and check response
-func testPayload(url string, param string, fileRoot string, wordlist string) {
-	if !strings.HasSuffix(fileRoot, "/") {
-		fileRoot += "/"
-	}
-
-	fullURL := fmt.Sprintf("%s?%s=%s%s", url, param, fileRoot, wordlist)
-	resp, err := http.Get(fullURL)
-	if err != nil {
-		// color.Red("[!] Request failed: %v\n", err)
-		return
-	}
-	defer resp.Body.Close()
-
-	// Simple check if the response might indicate a vulnerability
-	if resp.StatusCode == http.StatusOK {
-		color.Green("[+] Found Possible Vuln URL: %s (Status: %d)\n", fullURL, resp.StatusCode)
-	}
-}
-
-// Multi-threaded testing
-func testPathTraversal(url string, param string, fileRoot string, wordlist []string) {
-	_, err := http.Get(url)
-	if err != nil {
-		color.Red("[!] Host seems down...\n")
-		return
-	}
-
-	var wg sync.WaitGroup
-
-	for _, payload := range wordlist {
-		wg.Add(1)
-		go func(wl string) {
-			defer wg.Done()
-			testPayload(url, param, fileRoot, wl)
-		}(payload)
-	}
-
-	wg.Wait()
-}
-
 func main() {
 
 	log.SetOutput(io.Discard)
@@ -88,6 +44,7 @@ func main() {
 	param := flag.String("param", "file", "Parameter for testing (default is 'file')")
 	wordlistFile := flag.String("wordlist", "default.txt", "Wordlist path")
 	fileRoot := flag.String("root", "", "Root of the server file (e.g. https://example.com/image?filename=/var/www/images/1337.jpg, then root is `/var/www/images`, don't need to include the last `/`)")
+	extension := flag.String("extension", "", "File extension (e.g. jpg, png, txt, etc.), this will triger the null byte bypass mode")
 
 	flag.Parse()
 
@@ -106,6 +63,6 @@ func main() {
 		color.Magenta("[+] Using default wordlist...\n")
 	}
 
-	testPathTraversal(*url, *param, *fileRoot, payloads)
+	letsgo.Test(*url, *param, *fileRoot, *extension, payloads)
 	greet.End()
 }
