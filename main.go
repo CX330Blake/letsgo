@@ -19,7 +19,7 @@ func loadPayloads(filePath string) ([]string, bool) {
 	useDefault := false
 	file, err := os.Open(filePath)
 	if err != nil {
-		file, err = os.Open("./default.txt")
+		file, _ = os.Open("./default.txt")
 		useDefault = true
 		// return nil, fmt.Errorf("cannot load the wordlist: %v", err)
 	}
@@ -39,12 +39,11 @@ func loadPayloads(filePath string) ([]string, bool) {
 }
 
 // Send request and check response
-func testPayload(url string, param string, payload string) {
-	fullURL := fmt.Sprintf("%s?%s=%s", url, param, payload)
+func testPayload(url string, param string, fileRoot string, wordlist string) {
+	fullURL := fmt.Sprintf("%s?%s=%s/%s", url, param, fileRoot, wordlist)
 	resp, err := http.Get(fullURL)
 	if err != nil {
-
-		color.Red("[!] Request failed: %v\n", err)
+		// color.Red("[!] Request failed: %v\n", err)
 		return
 	}
 	defer resp.Body.Close()
@@ -56,7 +55,7 @@ func testPayload(url string, param string, payload string) {
 }
 
 // Multi-threaded testing
-func testPathTraversal(url string, param string, payloads []string) {
+func testPathTraversal(url string, param string, fileRoot string, wordlist []string) {
 	_, err := http.Get(url)
 	if err != nil {
 		color.Red("[!] Host seems down...\n")
@@ -65,11 +64,11 @@ func testPathTraversal(url string, param string, payloads []string) {
 
 	var wg sync.WaitGroup
 
-	for _, payload := range payloads {
+	for _, payload := range wordlist {
 		wg.Add(1)
-		go func(pl string) {
+		go func(wl string) {
 			defer wg.Done()
-			testPayload(url, param, pl)
+			testPayload(url, param, fileRoot, wl)
 		}(payload)
 	}
 
@@ -80,9 +79,11 @@ func main() {
 
 	log.SetOutput(io.Discard)
 	// Parse command line arguments
-	url := flag.String("url", "", "Target URL (E.g. http://example.com)")
+	url := flag.String("url", "", "Target URL (e.g. http://example.com)")
 	param := flag.String("param", "file", "Parameter for testing (default is 'file')")
 	wordlistFile := flag.String("wordlist", "default.txt", "Wordlist path")
+	fileRoot := flag.String("root", "", "Root of the server file (e.g. https://example.com/image?filename=/var/www/images/1337.jpg, then root is `/var/www/images`, don't need to include the last `/`)")
+
 	flag.Parse()
 
 	if *url == "" {
@@ -95,11 +96,11 @@ func main() {
 
 	payloads, useDefault := loadPayloads(*wordlistFile)
 	if useDefault && *wordlistFile != "default.txt" {
-		color.Magenta("[!] Cannot load the wordlist, using default list now...\n")
+		color.Magenta("[*] Cannot load the wordlist, using default list now...\n")
 	} else if *wordlistFile == "default.txt" {
 		color.Magenta("[+] Using default wordlist...\n")
 	}
 
-	testPathTraversal(*url, *param, payloads)
+	testPathTraversal(*url, *param, *fileRoot, payloads)
 	greet.End()
 }
