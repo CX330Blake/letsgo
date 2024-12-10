@@ -1,6 +1,6 @@
 module github.com/CX330Blake/letsgo
 
-go 1.23.1
+go 1.20
 
 require github.com/fatih/color v1.18.0
 
