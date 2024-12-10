@@ -24,6 +24,10 @@ Use the default settings to scan a URL.
 letsgo --url <https://example.com>
 ```
 
+### What it looks like?
+![image](https://github.com/user-attachments/assets/5e04950e-8ac3-4f31-b40c-6bddfe379574)
+
+
 ## Labs
 
 If you want to check what it can does, you can use the labs provided by Port Swigger. There're 6 labs which varies in defferent bypass skill to exploit the path traversal vulnerability, and **letsgo** can deal with ALL of them, quick, and precise. Use the lab to learn more about path traversal, GLHF!
