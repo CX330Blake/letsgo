@@ -6,19 +6,25 @@ import (
 	"io"
 	"log"
 	"os"
+	"strings"
 
 	"github.com/CX330Blake/letsgo/pkg/greet"
 	"github.com/CX330Blake/letsgo/pkg/letsgo"
 	"github.com/fatih/color"
+
+	_ "embed"
 )
+
+//go:embed assets/default.txt
+var defaultWordlist string
 
 // Load payload
 func loadPayloads(filePath string) ([]string, bool) {
 	useDefault := false
 	file, err := os.Open(filePath)
 	if err != nil {
-		file, _ = os.Open("./default.txt")
 		useDefault = true
+		return strings.Split(defaultWordlist, "\n"), useDefault
 		// return nil, fmt.Errorf("cannot load the wordlist: %v", err)
 	}
 	defer file.Close()
@@ -28,10 +34,6 @@ func loadPayloads(filePath string) ([]string, bool) {
 	for scanner.Scan() {
 		payloads = append(payloads, scanner.Text())
 	}
-
-	// if err := scanner.Err(); err != nil {
-	// 	return nil, useDefault
-	// }
 
 	return payloads, useDefault
 }
