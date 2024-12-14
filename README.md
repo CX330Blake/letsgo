@@ -25,8 +25,8 @@ letsgo --url <https://example.com>
 ```
 
 ### What it looks like?
-![image](https://github.com/user-attachments/assets/5e04950e-8ac3-4f31-b40c-6bddfe379574)
 
+![image](https://github.com/user-attachments/assets/5e04950e-8ac3-4f31-b40c-6bddfe379574)
 
 ## Labs
 
@@ -38,3 +38,7 @@ If you want to check what it can does, you can use the labs provided by Port Swi
 -   [PortSwigger - File path traversal, traversal sequences stripped with superfluous URL-decode](https://portswigger.net/web-security/file-path-traversal/lab-superfluous-url-decode)
 -   [PortSwigger - File path traversal, validation of start of path](https://portswigger.net/web-security/file-path-traversal/lab-validate-start-of-path)
 -   [PortSwigger - File path traversal, validation of file extension with null byte bypass](https://portswigger.net/web-security/file-path-traversal/lab-validate-file-extension-null-byte-bypass)
+
+## To-Dos
+
+1. Add the customize file name (e.g. flag.txt)
